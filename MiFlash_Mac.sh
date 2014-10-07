@@ -4,8 +4,12 @@ clear
 VER="0.2"
 
 if [[ $UID != 0 ]]; then
+	echo "MiFlash for Mac v$VER"
+	echo "created by @SomniusX"
+	echo ""
     echo "Please run this script with sudo:"
     echo "sudo $0 $*"
+	echo ""
     exit 1
 fi
 
@@ -37,25 +41,26 @@ until [ "$selection" = "0" ]; do
     case $selection in
         1 )
 			echo "Selected option 1: Install ADB & Fastboot Tools"
+			echo ""
 #1 ---------- Using github.com/corbindavenport nexus tools
 curl -s -o ./install.sh "http://github.com/corbindavenport/nexus-tools/raw/master/install.sh" -LOk
 chmod +x ./install.sh
 sed -e 's/Nexus Tools/MiFlash for Mac/g' install.sh > install.sh.tmp
 mv install.sh.tmp install.sh
-./install.sh
+bash ./install.sh
 rm ./install.sh
-			echo ""
 			echo "..done"
 			press_enter 
 		;;
         2 )
+			echo "Selected option 2: Uninstall ADB & Fastboot Tools"
+			echo ""
 curl -s -o ./uninstall.sh "http://github.com/corbindavenport/nexus-tools/raw/master/uninstall.sh" -LOk
 chmod +x ./uninstall.sh
 sed -e 's/Nexus Tools/MiFlash for Mac/g' uninstall.sh > uninstall.sh.tmp
 mv uninstall.sh.tmp uninstall.sh
-./uninstall.sh
+bash ./uninstall.sh
 rm ./uninstall.sh
-			echo ""
 			echo "..done"
 			press_enter
 		;;
