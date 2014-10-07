@@ -1,7 +1,12 @@
 #!/bin/bash
 # v0.1
 clear
-VER="0.4"
+VER="0.5"
+###########################################################
+### DON'T TOUCH THESE VARIABLES, DANGER OF DEVICE BRICK ###
+CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+THEAPP="$CURDIR/MiFlash_Mac.app/"
+###########################################################
 
 # Text color variables
 txtund=$(tput sgr 0 1)          # Underline
@@ -34,7 +39,7 @@ function press_enter
 
 function press_enter2
 {
-    echo -n "Press Enter to continue"
+    echo -n "Press Enter to start flashing.."
     read
 }
 
@@ -51,6 +56,7 @@ echo $(tput bold)"MiFlash for Mac v$VER"
 echo $(tput setaf 1) #set red
     echo "You need to be really carefull with the whole process"
 	echo "and make sure you are connected to the Internet."
+	echo "This program ONLY supports Xiaomi Mi3 and Mi4!!"
 echo $(tput sgr0) #reset colors
 echo $(tput bold)"1 - Install ADB & Fastboot Tools"
     echo "2 - Uninstall ADB & Fastboot Tools"
@@ -94,7 +100,8 @@ rm ./uninstall.sh
         3 )
 echo "[INFO] About to run Fastboot commands to your device."
 echo "[INFO] If you are not sure that your devices is in fastboot mode or"
-echo "[INFO] not even connected, time to hit that CTRL+C to stop this thing!"
+echo "[INFO] not even connected, plus if you haven't installed adb & fastboot"
+echo "[INFO] ..time to hit that CTRL+C to stop this thing!"
 echo ""
 read_more
 echo ""
@@ -118,9 +125,46 @@ echo "[INFO] If you have \"UPDATE\" folder with the fastboot rom contents on"
 echo "[INFO] your Desktop then you are ready to the \"flashing\" !!"
 echo $(tput bold)"[WARN] This process will wipe EVERYTHING inside your Phone!!" #set bold
 echo $(tput setaf 1)"[WARN] CONTINUE ONLY IF YOU KNOW WHAT YOU ARE DOING !!!"
+echo ""
+read_more
+echo ""
+echo "[WARN] This is the end of the line, continue only if you are ready."
+echo ""
 echo $(tput sgr0) #reset colors
 press_enter2
-			echo "[ OK ] sub-process is complete"
+####################################################################################
+####################################################################################
+####################################################################################
+### WARNING DON'T TAMPER WITH THE FOLLOWING CODE, YOU WILL BRICK YOUR DEVICE ###
+fastboot $* getvar product 2>&1 | grep "^product: *MSM8974$"
+if [ $? -ne 0 ] ; then 
+	echo ""
+	echo "$(tput bold)$(tput setaf 1)[WARN] Missmatching image and device, aborting...$(tput sgr0)"
+	echo ""
+	press_enter
+	exit;
+else
+	echo "$(tput bold)$(tput setaf 2)[ OK ]Found image and device, flashing...$(tput sgr0)"
+	echo ""
+	fastboot $* flash tz ~/Desktop/UPDATE/images/tz.mbn
+	fastboot $* flash dbi ~/Desktop/UPDATE/images/sdi.mbn
+	fastboot $* flash sbl1 ~/Desktop/UPDATE/images/sbl1.mbn
+	fastboot $* flash rpm ~/Desktop/UPDATE/images/rpm.mbn
+	fastboot $* flash aboot ~/Desktop/UPDATE/images/emmc_appsboot.mbn
+	fastboot $* erase boot
+	fastboot $* flash misc ~/Desktop/UPDATE/images/misc.img
+	fastboot $* flash modem+modem1 ~/Desktop/UPDATE/images/NON-HLOS.bin
+	fastboot $* flash system+system1 ~/Desktop/UPDATE/images/system.img
+	fastboot $* flash cache ~/Desktop/UPDATE/images/cache.img
+	fastboot $* flash userdata ~/Desktop/UPDATE/images/userdata.img
+	fastboot $* flash recovery ~/Desktop/UPDATE/images/recovery.img
+	fastboot $* flash boot+boot1 ~/Desktop/UPDATE/images/boot.img
+	fastboot $* reboot
+fi
+####################################################################################
+####################################################################################
+####################################################################################
+			echo "$(tput bold)$(tput setaf 2)[ OK ] Flashing is complete, enjoy(tput sgr0)"
 			echo ""
 			press_enter
 		;;
