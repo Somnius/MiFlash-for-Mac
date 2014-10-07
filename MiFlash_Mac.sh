@@ -3,6 +3,12 @@
 clear
 VER="0.2"
 
+if [[ $UID != 0 ]]; then
+    echo "Please run this script with sudo:"
+    echo "sudo $0 $*"
+    exit 1
+fi
+
 function press_enter
 {
     echo ""
@@ -43,7 +49,7 @@ rm ./install.sh
 			press_enter 
 		;;
         2 )
-curl -s -o ./install.sh "http://github.com/corbindavenport/nexus-tools/raw/master/uninstall.sh" -LOk
+curl -s -o ./uninstall.sh "http://github.com/corbindavenport/nexus-tools/raw/master/uninstall.sh" -LOk
 chmod +x ./uninstall.sh
 sed -e 's/Nexus Tools/MiFlash for Mac/g' uninstall.sh > uninstall.sh.tmp
 mv uninstall.sh.tmp uninstall.sh
