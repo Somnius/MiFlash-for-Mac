@@ -40,34 +40,37 @@ until [ "$selection" = "0" ]; do
     echo ""
     case $selection in
         1 )
-			echo "Selected option 1: Install ADB & Fastboot Tools"
-			echo ""
+			echo "[INFO] Selected 1: Install ADB & Fastboot Tools"
 #1 ---------- Using github.com/corbindavenport nexus tools
 curl -s -o ./install.sh "http://github.com/corbindavenport/nexus-tools/raw/master/install.sh" -LOk
 chmod +x ./install.sh
-sed -e 's/Nexus Tools/MiFlash for Mac/g' install.sh > install.sh.tmp
-mv install.sh.tmp install.sh
+sed -e 's/Nexus Tools/MiFlash for Mac/g' install.sh > install.sh.tmp && mv install.sh.tmp install.sh
+sed -e 's/Type adb or fastboot to run/adb and fastboot are installed on your system/g' install.sh > install.sh.tmp && mv install.sh.tmp install.sh
 bash ./install.sh
 rm ./install.sh
-			echo "..done"
+			echo "[ OK ] sub-process is complete"
 			press_enter 
 		;;
         2 )
-			echo "Selected option 2: Uninstall ADB & Fastboot Tools"
-			echo ""
+			echo "[INFO] Selected 2: Uninstall ADB & Fastboot Tools"
+#2 ---------- Using github.com/corbindavenport nexus tools
 curl -s -o ./uninstall.sh "http://github.com/corbindavenport/nexus-tools/raw/master/uninstall.sh" -LOk
 chmod +x ./uninstall.sh
 sed -e 's/Nexus Tools/MiFlash for Mac/g' uninstall.sh > uninstall.sh.tmp
 mv uninstall.sh.tmp uninstall.sh
 bash ./uninstall.sh
 rm ./uninstall.sh
-			echo "..done"
+			echo "[ OK ] sub-process is complete"
+			echo "[WARN] Program cannot continue without adb and fastboot"
+			echo "[INFO] ..terminating"
+			echo ""
+			echo "Thank you for using MiFlash for Mac v$VER Script by @SomniusX"
 			press_enter
+			exit
 		;;
         3 )
 			du -sh *
-			echo ""
-			echo "..done"
+			echo "[ OK ] sub-process is complete"
 			press_enter
 		;;
         0 )
